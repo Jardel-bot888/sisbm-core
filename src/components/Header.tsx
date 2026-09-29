@@ -97,7 +97,7 @@ export default function Header({ onNotifClick, onUserMenu, onNavigate, unreadCou
       <div className="flex items-center h-16 gap-3 px-4 overflow-hidden">
 
         {/* La marque n'est pas dans l'en-tête : ni logo ni image n'y figurent. Le bloc
-            de marque vit en haut de la sidebar (bouton de repli + « SISBM » + badge
+            de marque vit en haut de la sidebar (bouton de repli + « SISBM CORE » + badge
             Live) → une seule occurrence dans l'app. Les ~250 px libérés permettent de
             restaurer les éléments du cluster droit qui avaient été masqués. */}
 

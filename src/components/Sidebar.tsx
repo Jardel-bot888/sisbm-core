@@ -10,17 +10,19 @@ export default function Sidebar({ active, setActive, tier = userTier }: { active
   return (
     <aside
       className="flex flex-col h-full border-r transition-all duration-300 shrink-0"
-      style={{ width: collapsed ? 56 : 220, minWidth: collapsed ? 56 : 220, background: C.sideBg, borderColor: C.sideBorder }}
+      style={{ width: collapsed ? 56 : 248, minWidth: collapsed ? 56 : 248, background: C.sideBg, borderColor: C.sideBorder }}
     >
-      {/* Bandeau aligné sur la hauteur de la navbar (h-16) : marque « SISBM », badge Live
-          puis bouton de repli/dépli en bout de rangée (à droite). Plus aucune image de
+      {/* Bandeau aligné sur la hauteur de la navbar (h-16) : marque « SISBM CORE », badge
+          Live puis bouton de repli/dépli en bout de rangée (à droite). Le volet est élargi
+          de 220 à 248 px : le mot-symbole complet (~117 px) tient alors à côté du badge Live
+          et du bouton de repli (tous deux shrink-0), sans troncature. Plus aucune image de
           logo : le repli est commandé par une icône, et le bouton reste visible —
           recentré — en mode replié, seul moyen de redéplier la navigation. */}
       <div className="flex items-center gap-2 h-16 px-2 border-b shrink-0 overflow-hidden" style={{ borderColor: C.sideBorder }}>
         {!collapsed && (
           <>
             <span className="font-black text-lg leading-none tracking-tight whitespace-nowrap min-w-0 truncate" style={{ color: C.sideText }}>
-              SISBM
+              SISBM CORE
             </span>
             <span
               className="ml-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-semibold leading-none whitespace-nowrap shrink-0"
