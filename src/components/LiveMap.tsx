@@ -56,9 +56,8 @@ const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c));
 
 /**
- * Épingle d'un véhicule : pastille bleu nuit SISBM (identique dans les deux
- * thèmes) cerclée de la couleur du statut, silhouette de véhicule orientée
- * selon le cap réel, plaque lisible et halo pulsé pour les véhicules roulants.
+ * Repère haute visibilité : silhouette orientée, couleur de statut, plaque
+ * contrastée et halo pulsé pour les véhicules roulants.
  */
 function vehicleIcon(v: LiveVehicle, selected: boolean): L.DivIcon {
   const color = statusConfig[v.status]?.color ?? C.gray;
@@ -72,9 +71,11 @@ function vehicleIcon(v: LiveVehicle, selected: boolean): L.DivIcon {
     ${moving ? '<span class="sisbm-pin__pulse"></span>' : ""}
     <span class="sisbm-pin__body">
       <svg class="sisbm-pin__icon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="8" y="2.5" width="8" height="19" rx="3" fill="currentColor"></rect>
-        <rect class="sisbm-pin__glass" x="9.6" y="6" width="4.8" height="3.6" rx="1"></rect>
-        <rect class="sisbm-pin__glass" x="9.6" y="15" width="4.8" height="3" rx="1" opacity="0.7"></rect>
+        <path d="M7.1 4.3A3.2 3.2 0 0 1 10.2 2h3.6a3.2 3.2 0 0 1 3.1 2.3l1.2 4.1a3 3 0 0 1 1.8 2.8v6.1a2 2 0 0 1-2 2h-.5v1.2a1.5 1.5 0 0 1-3 0v-1.2h-4.8v1.2a1.5 1.5 0 0 1-3 0v-1.2h-.5a2 2 0 0 1-2-2v-6.1a3 3 0 0 1 1.8-2.8l1.2-4.1Z" fill="currentColor"></path>
+        <path class="sisbm-pin__glass" d="M9.1 5a1.2 1.2 0 0 1 1.1-.8h3.6a1.2 1.2 0 0 1 1.1.8l.9 3H8.2l.9-3Z"></path>
+        <path class="sisbm-pin__glass" d="M8.2 10h7.6l1 2.8H7.2l1-2.8Z"></path>
+        <circle cx="8.1" cy="15.4" r="1" fill="#173653"></circle>
+        <circle cx="15.9" cy="15.4" r="1" fill="#173653"></circle>
       </svg>
     </span>
     <span class="sisbm-pin__label">${escapeHtml(v.plate)}</span>

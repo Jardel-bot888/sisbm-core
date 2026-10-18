@@ -47,11 +47,11 @@
    Elles couvrent l'instant précédant le montage de React (applyTheme() les
    remplace ensuite par celles du thème choisi) : évite tout flash clair. */
 :root {
-  --sisbm-navy: #071B2D;
-  --sisbm-navyMid: #0D233C;
-  --sisbm-navyLight: #183B5E;
-  --sisbm-primary: #1A6BBA;
-  --sisbm-primaryLight: #3A9AEF;
+  --sisbm-navy: #0D233C;
+  --sisbm-navyMid: #173653;
+  --sisbm-navyLight: #28506F;
+  --sisbm-primary: #4B9FE8;
+  --sisbm-primaryLight: #78B9F2;
   --sisbm-green: #10B981;
   --sisbm-red: #EF4444;
   --sisbm-orange: #F59E0B;
@@ -59,22 +59,22 @@
   --sisbm-text: #F8FAFC;
   --sisbm-textMuted: #94A3B8;
   --sisbm-textDim: #CBD5E1;
-  --sisbm-border: #183B5E;
-  --sisbm-borderSoft: rgba(24, 59, 94, 0.65);
-  --sisbm-cardBg: #102B46;
-  --sisbm-bg: #071B2D;
+  --sisbm-border: #28506F;
+  --sisbm-borderSoft: rgba(40, 80, 111, 0.65);
+  --sisbm-cardBg: #173653;
+  --sisbm-bg: #0D233C;
   --sisbm-white: #FFFFFF;
   --sisbm-hover: rgba(255, 255, 255, 0.05);
-  --sisbm-soft: #16273D;
+  --sisbm-soft: #203E5A;
   --sisbm-switchOff: #334155;
   --sisbm-shadow: rgba(0, 0, 0, 0.55);
   /* Chrome latéral : identique en clair et en sombre (sidebar bleu nuit) */
-  --sisbm-sideBg: #0D233C;
-  --sisbm-sideBgAlt: #071B2D;
-  --sisbm-sideBorder: #183B5E;
+  --sisbm-sideBg: #173653;
+  --sisbm-sideBgAlt: #0D233C;
+  --sisbm-sideBorder: #28506F;
   --sisbm-sideText: #F8FAFC;
   --sisbm-sideTextMuted: #94A3B8;
-  --sisbm-sideAccent: #1A6BBA;
+  --sisbm-sideAccent: #4B9FE8;
   --sisbm-sideGreen: #10B981;
   color-scheme: dark;
 }
@@ -117,8 +117,8 @@ html, body, #root {
    Imagery, CARTO) : plus rien n'est dessiné à la main en pixels. Ce bloc
    n'habille donc que les surcouches (épingles véhicules, tracés GPS, zones de
    géorepérage, popups). Les pastilles posées sur les tuiles utilisent
-   `--sisbm-side*` : elles conservent le bleu nuit SISBM dans les deux thèmes,
-   comme la barre latérale, pour rester lisibles quel que soit le fond. */
+   couleurs blanches et accentuées par statut, pour rester lisibles quel que
+   soit le thème ou le fond de carte. */
 
 @keyframes sisbmPulse {
   0% {
@@ -163,29 +163,28 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
-  background: var(--sisbm-sideBg);
+  background: #fff;
   border: 2px solid var(--pin-color);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--pin-color) 30%, transparent), 0 2px 6px var(--sisbm-shadow);
-  transition: transform 0.18s ease;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 85%), 0 2px 8px rgb(15 23 42 / 35%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 /* Le véhicule s'oriente selon son cap réel (0° = Nord). */
 .sisbm-pin__icon {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   color: var(--pin-color);
   transform: rotate(var(--pin-bearing, 0deg));
   transition: transform 0.5s ease;
 }
 
-/* Vitres du pictogramme : teinte bleu nuit SISBM (la variable est portée par
-   le CSS, donc fiable — un attribut SVG `fill="var(--x)"` ne l'est pas). */
+/* La variable CSS conserve la couleur de statut sur la silhouette. */
 .sisbm-pin__glass {
-  fill: var(--sisbm-sideBg);
-  fill-opacity: 0.5;
+  fill: #fff;
+  fill-opacity: 0.95;
 }
 
 .sisbm-pin__label {
@@ -193,11 +192,12 @@ html, body, #root {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 1px 6px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--sisbm-sideBg) 88%, transparent);
-  color: var(--sisbm-sideText);
-  border: 1px solid color-mix(in srgb, var(--pin-color) 60%, transparent);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 94%);
+  color: #173653;
+  border: 1px solid color-mix(in srgb, var(--pin-color) 70%, white);
+  box-shadow: 0 1px 5px rgb(15 23 42 / 22%);
 }
 
 .sisbm-pin__pulse {
@@ -211,7 +211,7 @@ html, body, #root {
 
 .sisbm-pin--selected .sisbm-pin__body {
   transform: scale(1.2);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--pin-color) 45%, transparent), 0 3px 10px var(--sisbm-shadow);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--pin-color) 45%, transparent), 0 3px 10px rgb(15 23 42 / 40%);
 }
 
 .sisbm-pin--offline {

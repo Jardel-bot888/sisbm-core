@@ -3,8 +3,8 @@
 // <html data-theme="dark|light">. Le helper `v(name)` produit une référence
 // var(--sisbm-*) utilisable dans les styles inline : la bascule de thème ne
 // nécessite alors AUCUNE re-propagation dans les 25 fichiers consommateurs.
-// Les valeurs hexadécimales historiques du thème sombre sont conservées dans
-// DARK_VARS ; les composants restent visuellement identiques par défaut.
+// Les valeurs des deux palettes sont posées par thème, sans re-propagation
+// dans les composants consommateurs.
 
 import { useState, useEffect, useCallback } from "react";
 
@@ -43,16 +43,16 @@ export function va(color: string | undefined | null, amount: string): string {
   return base;
 }
 
-// ─── Valeurs sombres (rendu historique — inchangées) ──────────────────────────
+// ─── Valeurs sombres ─────────────────────────────────────────────────────────
 type VarMap = Record<string, string>;
 
 
 const DARK_VARS: VarMap = {
-  navy: "#071B2D",
-  navyMid: "#0D233C",
-  navyLight: "#183B5E",
-  primary: "#1A6BBA",
-  primaryLight: "#3A9AEF",
+  navy: "#0D233C",
+  navyMid: "#173653",
+  navyLight: "#28506F",
+  primary: "#4B9FE8",
+  primaryLight: "#78B9F2",
   green: "#10B981",
   red: "#EF4444",
   orange: "#F59E0B",
@@ -60,15 +60,15 @@ const DARK_VARS: VarMap = {
   text: "#F8FAFC",
   textMuted: "#94A3B8",
   textDim: "#CBD5E1",
-  border: "#183B5E",
+  border: "#28506F",
   // Bordure « adoucie » des cartes (style SaaS) : le navy reste lisible mais
   // moins marqué, pour laisser respirer les surfaces.
-  borderSoft: "rgba(24,59,94,0.65)",
-  cardBg: "#102B46",
-  bg: "#071B2D",
+  borderSoft: "rgba(40,80,111,0.65)",
+  cardBg: "#173653",
+  bg: "#0D233C",
   white: "#FFFFFF",
   hover: "rgba(255,255,255,0.05)",
-  soft: "#16273D",
+  soft: "#203E5A",
   switchOff: "#334155",
   // Ombre portée des cartes cliquables (surlèvement au survol) : plus dense en
   // sombre, où une ombre trop légère serait imperceptible sur le bleu nuit.
@@ -76,12 +76,12 @@ const DARK_VARS: VarMap = {
   // ── Chrome de la barre latérale : valeurs volontairement IDENTIQUES dans les
   //    deux thèmes — la sidebar garde son bleu nuit (identité de marque SISBM)
   //    même en mode clair, comme la sidebar d'un dashboard SaaS classique.
-  sideBg: "#0D233C",
-  sideBgAlt: "#071B2D",
-  sideBorder: "#183B5E",
+  sideBg: "#173653",
+  sideBgAlt: "#0D233C",
+  sideBorder: "#28506F",
   sideText: "#F8FAFC",
   sideTextMuted: "#94A3B8",
-  sideAccent: "#1A6BBA",
+  sideAccent: "#4B9FE8",
   // Vert vif du badge « Live » de la sidebar : assombri en mode clair, il
   // n'aurait pas assez de contraste sur le fond bleu nuit (chrome constant).
   sideGreen: "#10B981",
@@ -92,8 +92,8 @@ const LIGHT_VARS: VarMap = {
   navy: "#FFFFFF",
   navyMid: "#FFFFFF",
   navyLight: "#E2E8F0",
-  primary: "#0F4C8A",
-  primaryLight: "#1A6BBA",
+  primary: "#2E7EC3",
+  primaryLight: "#5BA5E5",
   green: "#059669",
   red: "#DC2626",
   orange: "#D97706",
@@ -111,13 +111,13 @@ const LIGHT_VARS: VarMap = {
   soft: "#E8F0FE",
   switchOff: "#CBD5E1",
   shadow: "rgba(15,23,42,0.16)",
-  // Chrome latéral inchangé : la sidebar reste bleu nuit en mode clair.
-  sideBg: "#0D233C",
-  sideBgAlt: "#071B2D",
-  sideBorder: "#183B5E",
+  // Chrome latéral cohérent dans les deux thèmes.
+  sideBg: "#173653",
+  sideBgAlt: "#0D233C",
+  sideBorder: "#28506F",
   sideText: "#F8FAFC",
   sideTextMuted: "#94A3B8",
-  sideAccent: "#1A6BBA",
+  sideAccent: "#4B9FE8",
   sideGreen: "#10B981",
 };
 
