@@ -48,52 +48,11 @@ type VarMap = Record<string, string>;
 
 
 const DARK_VARS: VarMap = {
-  navy: "#0D233C",
-  navyMid: "#173653",
-  navyLight: "#28506F",
-  primary: "#4B9FE8",
-  primaryLight: "#78B9F2",
-  green: "#10B981",
-  red: "#EF4444",
-  orange: "#F59E0B",
-  gray: "#64748B",
-  text: "#F8FAFC",
-  textMuted: "#94A3B8",
-  textDim: "#CBD5E1",
-  border: "#28506F",
-  // Bordure « adoucie » des cartes (style SaaS) : le navy reste lisible mais
-  // moins marqué, pour laisser respirer les surfaces.
-  borderSoft: "rgba(40,80,111,0.65)",
-  cardBg: "#173653",
-  bg: "#0D233C",
-  white: "#FFFFFF",
-  hover: "rgba(255,255,255,0.05)",
-  soft: "#203E5A",
-  switchOff: "#334155",
-  // Ombre portée des cartes cliquables (surlèvement au survol) : plus dense en
-  // sombre, où une ombre trop légère serait imperceptible sur le bleu nuit.
-  shadow: "rgba(0,0,0,0.55)",
-  // ── Chrome de la barre latérale : valeurs volontairement IDENTIQUES dans les
-  //    deux thèmes — la sidebar garde son bleu nuit (identité de marque SISBM)
-  //    même en mode clair, comme la sidebar d'un dashboard SaaS classique.
-  sideBg: "#173653",
-  sideBgAlt: "#0D233C",
-  sideBorder: "#28506F",
-  sideText: "#F8FAFC",
-  sideTextMuted: "#94A3B8",
-  sideAccent: "#4B9FE8",
-  // Vert vif du badge « Live » de la sidebar : assombri en mode clair, il
-  // n'aurait pas assez de contraste sur le fond bleu nuit (chrome constant).
-  sideGreen: "#10B981",
-};
-
-// ─── Valeurs claires ─────────────────────────────────────────────────────────
-const LIGHT_VARS: VarMap = {
   navy: "#FFFFFF",
   navyMid: "#FFFFFF",
-  navyLight: "#E2E8F0",
-  primary: "#2E7EC3",
-  primaryLight: "#5BA5E5",
+  navyLight: "#DCEAF7",
+  primary: "#286EA8",
+  primaryLight: "#4B91C8",
   green: "#059669",
   red: "#DC2626",
   orange: "#D97706",
@@ -101,24 +60,55 @@ const LIGHT_VARS: VarMap = {
   text: "#1A2332",
   textMuted: "#6B7A90",
   textDim: "#334155",
-  border: "#E2E8F0",
-  // Équivalent demandé de `border-slate-100/80` en mode clair.
-  borderSoft: "rgba(241,245,249,0.8)",
+  border: "#D4E3F0",
+  borderSoft: "rgba(232,240,247,0.9)",
   cardBg: "#FFFFFF",
   bg: "#F0F4F8",
   white: "#FFFFFF",
-  hover: "rgba(15,76,138,0.06)",
-  soft: "#E8F0FE",
+  hover: "rgba(40,110,168,0.08)",
+  soft: "#EAF4FD",
   switchOff: "#CBD5E1",
   shadow: "rgba(15,23,42,0.16)",
-  // Chrome latéral cohérent dans les deux thèmes.
-  sideBg: "#173653",
-  sideBgAlt: "#0D233C",
-  sideBorder: "#28506F",
+  sideBg: "#0E508D",
+  sideBgAlt: "#0A4479",
+  sideBorder: "#245F91",
   sideText: "#F8FAFC",
-  sideTextMuted: "#94A3B8",
-  sideAccent: "#4B9FE8",
+  sideTextMuted: "#E2F0FF",
+  sideAccent: "#8CC8FF",
   sideGreen: "#10B981",
+};
+
+// ─── Valeurs claires ─────────────────────────────────────────────────────────
+const LIGHT_VARS: VarMap = {
+  navy: "#FFFFFF",
+  navyMid: "#FFFFFF",
+  navyLight: "#DCEAF7",
+  primary: "#286EA8",
+  primaryLight: "#4B91C8",
+  green: "#059669",
+  red: "#DC2626",
+  orange: "#D97706",
+  gray: "#64748B",
+  text: "#1A2332",
+  textMuted: "#6B7A90",
+  textDim: "#334155",
+  border: "#D4E3F0",
+  // Équivalent demandé de `border-slate-100/80` en mode clair.
+  borderSoft: "rgba(232,240,247,0.9)",
+  cardBg: "#FFFFFF",
+  bg: "#F0F4F8",
+  white: "#FFFFFF",
+  hover: "rgba(40,110,168,0.08)",
+  soft: "#EAF4FD",
+  switchOff: "#CBD5E1",
+  shadow: "rgba(15,23,42,0.16)",
+  sideBg: "#F0F7FD",
+  sideBgAlt: "#E4F0FA",
+  sideBorder: "#C7DBEC",
+  sideText: "#18324A",
+  sideTextMuted: "#58718A",
+  sideAccent: "#347FB8",
+  sideGreen: "#047857",
 };
 
 export const themeVars: Record<ThemeName, VarMap> = {
@@ -154,7 +144,7 @@ export const C: ThemeRef = {
   soft: v("soft"),
   switchOff: v("switchOff"),
   shadow: v("shadow"),
-  // Chrome latéral (bleu nuit dans les deux thèmes)
+  // Chrome latéral adapté à chaque thème
   sideBg: v("sideBg"),
   sideBgAlt: v("sideBgAlt"),
   sideBorder: v("sideBorder"),
@@ -182,7 +172,8 @@ function readStoredTheme(): ThemeName {
   try {
     const val = window.localStorage.getItem(STORAGE_KEY);
     return val === "light" ? "light" : "dark";
-  } catch {
+  } catch (error) {
+    console.warn("[SISBM CORE] Impossible de lire le thème mémorisé :", error);
     return "dark";
   }
 }
@@ -191,11 +182,9 @@ function readStoredTheme(): ThemeName {
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeName>(() => {
     const stored = readStoredTheme();
-    // Pose immédiate des variables pour éviter tout flash au 1er rendu
-    // (le state initial sera identique → pas de double application).
-    if (typeof document !== "undefined" && !document.documentElement.dataset.theme) {
-      applyTheme(stored);
-    }
+    // Synchronise les variables avant le premier rendu, même si le script
+    // HTML a déjà posé data-theme sans avoir appliqué la palette complète.
+    applyTheme(stored);
     return stored;
   });
 
@@ -203,10 +192,22 @@ export function useTheme() {
     applyTheme(theme);
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      /* stockage indisponible — le thème reste en mémoire */
+    } catch (error) {
+      console.warn("[SISBM CORE] Impossible de mémoriser le thème :", error);
     }
   }, [theme]);
+
+  useEffect(() => {
+    const syncTheme = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY && event.key !== null) return;
+      const nextTheme: ThemeName = event.newValue === "light" ? "light" : "dark";
+      applyTheme(nextTheme);
+      setTheme(nextTheme);
+    };
+
+    window.addEventListener("storage", syncTheme);
+    return () => window.removeEventListener("storage", syncTheme);
+  }, []);
 
   const toggleTheme = useCallback(() => {
     setTheme((t) => (t === "dark" ? "light" : "dark"));

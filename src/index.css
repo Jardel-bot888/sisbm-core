@@ -43,40 +43,39 @@
   --border: #e2e8f0;
 }
 
-/* Thème SISBM CORE — valeurs de repli (rendu sombre = thème par défaut).
+/* Thème SISBM CORE — valeurs de repli (contenu clair = thème par défaut).
    Elles couvrent l'instant précédant le montage de React (applyTheme() les
-   remplace ensuite par celles du thème choisi) : évite tout flash clair. */
+   remplace ensuite par celles du thème choisi) : évite tout flash de couleurs. */
 :root {
-  --sisbm-navy: #0D233C;
-  --sisbm-navyMid: #173653;
-  --sisbm-navyLight: #28506F;
-  --sisbm-primary: #4B9FE8;
-  --sisbm-primaryLight: #78B9F2;
-  --sisbm-green: #10B981;
-  --sisbm-red: #EF4444;
-  --sisbm-orange: #F59E0B;
+  --sisbm-navy: #FFFFFF;
+  --sisbm-navyMid: #FFFFFF;
+  --sisbm-navyLight: #DCEAF7;
+  --sisbm-primary: #286EA8;
+  --sisbm-primaryLight: #4B91C8;
+  --sisbm-green: #059669;
+  --sisbm-red: #DC2626;
+  --sisbm-orange: #D97706;
   --sisbm-gray: #64748B;
-  --sisbm-text: #F8FAFC;
-  --sisbm-textMuted: #94A3B8;
-  --sisbm-textDim: #CBD5E1;
-  --sisbm-border: #28506F;
-  --sisbm-borderSoft: rgba(40, 80, 111, 0.65);
-  --sisbm-cardBg: #173653;
-  --sisbm-bg: #0D233C;
+  --sisbm-text: #1A2332;
+  --sisbm-textMuted: #6B7A90;
+  --sisbm-textDim: #334155;
+  --sisbm-border: #D4E3F0;
+  --sisbm-borderSoft: rgba(232, 240, 247, 0.9);
+  --sisbm-cardBg: #FFFFFF;
+  --sisbm-bg: #F0F4F8;
   --sisbm-white: #FFFFFF;
-  --sisbm-hover: rgba(255, 255, 255, 0.05);
-  --sisbm-soft: #203E5A;
-  --sisbm-switchOff: #334155;
-  --sisbm-shadow: rgba(0, 0, 0, 0.55);
-  /* Chrome latéral : identique en clair et en sombre (sidebar bleu nuit) */
-  --sisbm-sideBg: #173653;
-  --sisbm-sideBgAlt: #0D233C;
-  --sisbm-sideBorder: #28506F;
+  --sisbm-hover: rgba(40, 110, 168, 0.08);
+  --sisbm-soft: #EAF4FD;
+  --sisbm-switchOff: #CBD5E1;
+  --sisbm-shadow: rgba(15, 23, 42, 0.16);
+  --sisbm-sideBg: #0E508D;
+  --sisbm-sideBgAlt: #0A4479;
+  --sisbm-sideBorder: #245F91;
   --sisbm-sideText: #F8FAFC;
-  --sisbm-sideTextMuted: #94A3B8;
-  --sisbm-sideAccent: #4B9FE8;
+  --sisbm-sideTextMuted: #E2F0FF;
+  --sisbm-sideAccent: #8CC8FF;
   --sisbm-sideGreen: #10B981;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 /* Contrôles natifs (select, input, scrollbars) accordés au thème actif.
@@ -86,6 +85,34 @@
 html[data-theme='light'] {
   color-scheme: light;
   background-color: #f0f4f8;
+  --sisbm-navy: #FFFFFF;
+  --sisbm-navyMid: #FFFFFF;
+  --sisbm-navyLight: #DCEAF7;
+  --sisbm-primary: #286EA8;
+  --sisbm-primaryLight: #4B91C8;
+  --sisbm-green: #059669;
+  --sisbm-red: #DC2626;
+  --sisbm-orange: #D97706;
+  --sisbm-gray: #64748B;
+  --sisbm-text: #1A2332;
+  --sisbm-textMuted: #6B7A90;
+  --sisbm-textDim: #334155;
+  --sisbm-border: #D4E3F0;
+  --sisbm-borderSoft: rgba(232, 240, 247, 0.9);
+  --sisbm-cardBg: #FFFFFF;
+  --sisbm-bg: #F0F4F8;
+  --sisbm-white: #FFFFFF;
+  --sisbm-hover: rgba(40, 110, 168, 0.08);
+  --sisbm-soft: #EAF4FD;
+  --sisbm-switchOff: #CBD5E1;
+  --sisbm-shadow: rgba(15, 23, 42, 0.16);
+  --sisbm-sideBg: #F0F7FD;
+  --sisbm-sideBgAlt: #E4F0FA;
+  --sisbm-sideBorder: #C7DBEC;
+  --sisbm-sideText: #18324A;
+  --sisbm-sideTextMuted: #58718A;
+  --sisbm-sideAccent: #347FB8;
+  --sisbm-sideGreen: #047857;
 }
 html[data-theme='light'] body {
   background-color: #f0f4f8;
@@ -93,7 +120,7 @@ html[data-theme='light'] body {
 }
 
 html[data-theme='dark'] {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {

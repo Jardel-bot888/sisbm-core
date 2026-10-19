@@ -10,7 +10,9 @@
       try {
         document.documentElement.dataset.theme =
           window.localStorage.getItem("sisbm-theme") === "light" ? "light" : "dark";
-      } catch (e) {}
+      } catch (error) {
+        console.warn("[SISBM CORE] Impossible de lire le thème mémorisé :", error);
+      }
     </script>
     <!-- figma:head-end -->
   </head>

@@ -191,7 +191,7 @@ export default function Header({ onNotifClick, onUserMenu, onNavigate, unreadCou
         <button
           type="button"
           onClick={onToggleTheme}
-          aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
+          aria-label="Thème clair"
           aria-pressed={theme === "light"}
           title={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
           className="w-10 h-10 rounded-lg flex items-center justify-center border flex-shrink-0" style={{ background: C.navy, borderColor: C.navyLight, color: C.textMuted }}
