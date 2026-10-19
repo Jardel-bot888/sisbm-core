@@ -154,7 +154,7 @@ export const C: ThemeRef = {
   sideGreen: v("sideGreen"),
 };
 
-const STORAGE_KEY = "sisbm-theme";
+const STORAGE_KEY = "sisbm-theme-v2";
 
 /** Applique un thème : variables CSS + attribut data-theme sur <html>. */
 export function applyTheme(theme: ThemeName) {

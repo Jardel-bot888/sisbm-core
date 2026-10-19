@@ -9,7 +9,7 @@
       // Applique le thème mémorisé avant le montage de React (aucun flash).
       try {
         document.documentElement.dataset.theme =
-          window.localStorage.getItem("sisbm-theme") === "light" ? "light" : "dark";
+          window.localStorage.getItem("sisbm-theme-v2") === "light" ? "light" : "dark";
       } catch (error) {
         console.warn("[SISBM CORE] Impossible de lire le thème mémorisé :", error);
       }

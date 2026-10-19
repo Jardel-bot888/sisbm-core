@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   /** Réinitialise les préférences locales (thème, notifications lues) puis recharge. */
   private resetPrefs = () => {
     try {
-      window.localStorage.removeItem("sisbm-theme");
+      window.localStorage.removeItem("sisbm-theme-v2");
     } catch {
       /* stockage indisponible : on recharge simplement */
     }
