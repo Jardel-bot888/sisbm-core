@@ -22,7 +22,6 @@ const CentreAlertes = lazy(() => import("@/pages/CentreAlertes"));
 const GestionIncidents = lazy(() => import("@/pages/GestionIncidents"));
 const MoteurRegles = lazy(() => import("@/pages/MoteurRegles"));
 const RapportsExports = lazy(() => import("@/pages/RapportsExports"));
-const MaintenancePreventive = lazy(() => import("@/pages/MaintenancePreventive"));
 const Conducteurs = lazy(() => import("@/pages/Conducteurs"));
 const SupervisionSms = lazy(() => import("@/pages/SupervisionSms"));
 const Administration = lazy(() => import("@/pages/Administration"));
@@ -72,8 +71,6 @@ export default function App() {
         return <MoteurRegles />;
       case "Rapports & Exports":
         return <RapportsExports onNavigate={navigate} />;
-      case "Maintenance préventive":
-        return <MaintenancePreventive />;
       case "Conducteurs":
         return <Conducteurs />;
       case "Supervision SMS & Fact.":
@@ -85,8 +82,6 @@ export default function App() {
         return (
           <Dashboard
             onNavigate={navigate}
-            onVehicleClick={handleVehicleClick}
-            onImmobilize={handleImmobilize}
           />
         );
     }

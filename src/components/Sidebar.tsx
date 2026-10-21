@@ -6,7 +6,9 @@ import { navItems, userTier } from "@/data/mock";
 import { BlinkDot } from "@/ui";
 
 export default function Sidebar({ active, setActive, tier = userTier }: { active: string; setActive: (s: string) => void; tier?: string }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
+  );
   return (
     <aside
       className="flex flex-col h-full border-r transition-all duration-300 shrink-0"
@@ -106,3 +108,4 @@ export default function Sidebar({ active, setActive, tier = userTier }: { active
     </aside>
   );
 }
+

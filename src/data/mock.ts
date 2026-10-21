@@ -4,7 +4,7 @@
 
 import {
   LayoutGrid, MapPinned, Map, Gauge, Clock3, BellRing, TriangleAlert,
-  ShieldCheck, FileText, Wrench, Users, MessageSquareText, Shield,
+  ShieldCheck, FileText, Users, MessageSquareText, Shield,
   type LucideIcon,
 } from "lucide-react";
 import { C } from "@/theme";
@@ -23,7 +23,6 @@ export const navItems: NavItem[] = [
   { icon: TriangleAlert, label: "Gestion des incidents", tier: "standard", badge: 2 },
   { icon: ShieldCheck, label: "Moteur de règles", tier: "gold" },
   { icon: FileText, label: "Rapports & Exports", tier: "standard" },
-  { icon: Wrench, label: "Maintenance préventive", tier: "gold" },
   { icon: Users, label: "Conducteurs", tier: "standard" },
   { icon: MessageSquareText, label: "Supervision SMS & Fact.", tier: "premium" },
   { icon: Shield, label: "Administration & Droits", tier: "premium" },

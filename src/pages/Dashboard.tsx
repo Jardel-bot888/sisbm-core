@@ -1,153 +1,175 @@
 // ─── Page Tableau de bord ─────────────────────────────────────────────────────
-import { CarFront, MapPinned, CircleDashed, Gauge, Fuel, Map, Clock3, ShieldCheck, FileText } from "lucide-react";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { C, va } from "@/theme";import { kpis, quickActions, fleetPie, incidentBar, type Vehicle } from "@/data/mock";
-import { BlinkDot } from "@/ui";
-import AbidjanMap from "@/components/AbidjanMap";
-import AlertsPanel from "@/components/AlertsPanel";
-import FleetTable from "@/components/FleetTable";
+import {
+  Activity,
+  AlertTriangle,
+  BatteryWarning,
+  Compass,
+  Gauge,
+  MapPin,
+  Radio,
+  Satellite,
+  ShieldCheck,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
+import { C, va } from "@/theme";
+import { gpsSample } from "@/data/gpsSample";
+import { useGpsFeed } from "@/data/gpsFeed";
+import GpsSnapshotMap from "@/components/GpsSnapshotMap";
 
-const kpiIconMap: Record<string, typeof CarFront> = { CarFront, MapPinned, CircleDashed, Gauge, Fuel };
-const actionIconMap: Record<string, typeof CarFront> = { Map, Gauge, Clock3, ShieldCheck, FileText };
+type Props = { onNavigate: (label: string) => void };
 
-type Props = {
-  onNavigate: (label: string) => void;
-  onVehicleClick: (v: Vehicle) => void;
-  onImmobilize: (v: Vehicle) => void;
-};
+function formatUtc(seconds: number) {
+  return new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    timeZone: "UTC",
+  }).format(new Date(seconds * 1000));
+}
 
-export default function Dashboard({ onNavigate, onVehicleClick, onImmobilize }: Props) {
+function Metric({
+  icon: Icon,
+  label,
+  value,
+  detail,
+  color,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  detail: string;
+  color: string;
+}) {
+  return (
+    <div className="flex min-w-0 items-center gap-3 rounded-xl border px-4 py-3" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
+      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg" style={{ background: va(color, "12%"), color }}>
+        <Icon className="h-5 w-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs" style={{ color: C.textMuted }}>{label}</p>
+        <p className="mt-1 truncate font-mono text-xl font-bold tabular-nums" style={{ color: C.text }}>{value}</p>
+        <p className="mt-0.5 truncate text-[11px]" style={{ color: C.textDim }}>{detail}</p>
+      </div>
+    </div>
+  );
+}
+
+const reportedFlags: { label: string; active: boolean; icon: LucideIcon }[] = [
+  { label: "Événement de survitesse", active: gpsSample.overspeedingEvent, icon: Gauge },
+  { label: "Alarme de coupure d’alimentation", active: gpsSample.powerCutAlarm, icon: Zap },
+  { label: "Alarme d’arrêt", active: gpsSample.shutdownAlarm, icon: AlertTriangle },
+  { label: "Alarme de vibration", active: gpsSample.vibrationAlarm, icon: Activity },
+];
+
+export default function Dashboard({ onNavigate }: Props) {
+  const { vehicles } = useGpsFeed();
+
   return (
     <div className="space-y-4">
-      {/* KPIs */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
-        {kpis.map((kpi, i) => {
-          const Icon = kpiIconMap[kpi.icon] ?? CarFront;
-          return (
-            <div key={i} className="group flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-lift hover:border-[var(--sisbm-primary)]" style={{ background: C.cardBg, borderColor: C.borderSoft, minHeight: 96 }}>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border flex-shrink-0 transition-transform duration-200 group-hover:scale-110" style={{ background: C.navy, borderColor: C.borderSoft }}>
-                <Icon className="h-4 w-4" style={{ color: C.text }} />
-              </div>
-              <div className="min-w-0 flex-1 leading-none">
-                <p className="text-[13px] font-medium leading-none" style={{ color: C.textMuted }}>{kpi.label}</p>
-                <p className="mt-2 font-black font-mono tabular-nums text-[24px] leading-none tracking-[-0.04em]" style={{ color: C.text }}>{kpi.value}</p>
-                <p className="mt-2 text-[12px] leading-none" style={{ color: kpi.subColor === "green" ? C.green : kpi.subColor === "red" ? C.red : C.textMuted }}>{kpi.sub}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="mb-1 text-[11px] font-bold uppercase tracking-wide" style={{ color: C.primary }}>Supervision télématique</p>
+          <h1 className="text-2xl font-bold" style={{ color: C.text }}>Tableau de bord GPS</h1>
+          <p className="mt-1 text-sm" style={{ color: C.textMuted }}>Dernière trame disponible pour le boîtier {gpsSample.deviceName}.</p>
+        </div>
+        <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold" style={{ color: C.orange, borderColor: va(C.orange, "35%"), background: va(C.orange, "8%") }}>
+          <Radio className="h-3.5 w-3.5" /> Trame de démonstration
+        </span>
+      </header>
 
-      {/* Carte + panneau latéral */}
-      <div className="flex gap-4 flex-col lg:flex-row items-stretch lg:h-[560px]" style={{ minHeight: 420 }}>
-        <div className="flex-1 min-w-0 rounded-2xl border flex flex-col overflow-hidden transition-all duration-200 hover:shadow-lift" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
-          <div className="px-4 py-2.5 border-b flex items-center justify-between flex-shrink-0" style={{ borderColor: C.border }}>
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Mesures GPS reçues">
+        <Metric icon={Gauge} label="Vitesse" value={`${gpsSample.speed} km/h`} detail={gpsSample.movement ? "Mouvement signalé" : "Aucun mouvement signalé"} color={C.primary} />
+        <Metric icon={Zap} label="Contact moteur" value={gpsSample.ignition ? "ACTIF" : "INACTIF"} detail="État fourni par le traceur" color={gpsSample.ignition ? C.green : C.gray} />
+        <Metric icon={BatteryWarning} label="Alimentation externe" value={`${gpsSample.externalVoltage.toFixed(1)} V`} detail="Tension remontée" color={C.orange} />
+        <Metric icon={Satellite} label="Satellites GPS" value={`${gpsSample.satellites}`} detail={`${gpsSample.beidouSatellites} satellites Beidou`} color={C.primaryLight} />
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.85fr)]">
+        <div className="overflow-hidden rounded-xl border" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3" style={{ borderColor: C.border }}>
             <div className="flex items-center gap-2">
-              <BlinkDot color={C.green} />
-              <span className="font-bold text-sm" style={{ color: C.text }}>Suivi en temps réel</span>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: va(C.green, "13%"), color: C.green }}>28 véhicules actifs</span>
+              <MapPin className="h-4 w-4" style={{ color: C.primary }} />
+              <h2 className="text-sm font-bold" style={{ color: C.text }}>Carte de la flotte</h2>
             </div>
-            <button onClick={() => onNavigate("Tracking GPS")} className="text-xs px-2 py-1 rounded-lg border" style={{ background: C.navy, borderColor: C.border, color: C.textMuted }}>
-              ⛶ Plein écran
-            </button>
+            <span className="text-xs font-semibold" style={{ color: C.textMuted }}>{vehicles.length} véhicules · {gpsSample.deviceName}</span>
           </div>
-          <div className="flex-1 min-h-0 p-2">
-            <AbidjanMap onVehicleClick={onVehicleClick} />
+          <div className="h-[340px] min-h-[320px]">
+            <GpsSnapshotMap />
+          </div>
+          <div className="grid gap-3 border-t px-4 py-3 sm:grid-cols-3" style={{ borderColor: C.border }}>
+            <div><p className="text-[11px]" style={{ color: C.textMuted }}>Cap</p><p className="mt-1 flex items-center gap-1.5 text-sm font-semibold" style={{ color: C.text }}><Compass className="h-3.5 w-3.5" />{gpsSample.direction}°</p></div>
+            <div><p className="text-[11px]" style={{ color: C.textMuted }}>Altitude</p><p className="mt-1 text-sm font-semibold" style={{ color: C.text }}>{gpsSample.altitude} m</p></div>
+            <div><p className="text-[11px]" style={{ color: C.textMuted }}>Kilométrage reçu</p><p className="mt-1 font-mono text-sm font-semibold tabular-nums" style={{ color: C.text }}>{gpsSample.mileage.toLocaleString("fr-FR")} km</p></div>
           </div>
         </div>
-
-        <div className="shrink-0 w-full lg:w-[320px]">
-          <AlertsPanel onNavigate={onNavigate} />
-        </div>
-      </div>
-{/* Actions rapides */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
-        {quickActions.map((qa, i) => {
-          const Icon = actionIconMap[qa.icon] ?? CarFront;
-          return (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onNavigate(qa.target)}
-              className="group flex flex-col items-center gap-2 px-3 py-4 rounded-2xl border text-center cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-lift hover:border-[var(--sisbm-primary)]"
-              style={{ background: C.cardBg, borderColor: C.borderSoft }}
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110" style={{ background: C.navy }}>
-                <Icon className="h-5 w-5" style={{ color: C.text }} />
-              </div>
-              <p className="text-xs font-semibold" style={{ color: C.text }}>{qa.label}</p>
-              <p className="text-[10px] leading-tight" style={{ color: C.textMuted }}>{qa.desc}</p>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Tableau + graphiques */}
-      <div className="grid gap-4 xl:grid-cols-2">
-        <FleetTable onImmobilize={onImmobilize} onSelect={onVehicleClick} onNavigate={onNavigate} />
 
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border p-4 transition-all duration-200 hover:shadow-lift" style={{ background: C.soft, borderColor: C.borderSoft }}>
-            <span className="font-bold text-[16px] block mb-3" style={{ color: C.text }}>État de la flotte</span>
-            <div className="flex items-center gap-5 flex-wrap">
-              <div className="relative flex-shrink-0">
-                <PieChart width={170} height={170}>
-                  {/* Dégradé subtil par segment : plus dense en haut, plus léger en bas */}
-                  <defs>
-                    {fleetPie.map((entry, i) => (
-                      <linearGradient key={i} id={`pieGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" style={{ stopColor: entry.color }} stopOpacity={0.95} />
-                        <stop offset="100%" style={{ stopColor: entry.color }} stopOpacity={0.55} />
-                      </linearGradient>
-                    ))}
-                  </defs>
-                  <Pie data={fleetPie} cx={85} cy={85} innerRadius={42} outerRadius={68} dataKey="value" startAngle={90} endAngle={-270} cornerRadius={6} paddingAngle={2}>
-                    {fleetPie.map((_entry, i) => <Cell key={i} fill={`url(#pieGrad${i})`} />)}
-                  </Pie>
-                </PieChart>
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="font-black font-mono tabular-nums text-[30px] leading-none" style={{ color: C.text }}>28</span>
-                  <span className="text-xs mt-1" style={{ color: C.textMuted }}>Total</span>
-                </div>
+          <section className="rounded-xl border p-4" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs" style={{ color: C.textMuted }}>Boîtier GPS</p>
+                <h2 className="mt-1 text-lg font-bold" style={{ color: C.text }}>{gpsSample.deviceName}</h2>
+                <p className="mt-0.5 font-mono text-xs" style={{ color: C.textDim }}>Identifiant {gpsSample.ident}</p>
               </div>
-              <div className="flex-1 space-y-3 py-2 min-w-[160px]">
-                {fleetPie.map((f, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: f.color }} />
-                    <span className="text-xs flex-1" style={{ color: C.textDim }}>{f.name}</span>
-                    <span className="text-xs font-bold" style={{ color: C.text }}>{f.value}</span>
-                    <span className="text-xs" style={{ color: C.textMuted }}>({Math.round((f.value / 28) * 100)}%)</span>
-                  </div>
-                ))}
+              <span className="rounded-md px-2 py-1 text-[10px] font-bold" style={{ background: va(C.green, "12%"), color: C.green }}>CONTACT ON</span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3" style={{ borderColor: C.border }}>
+              <div><p className="text-[11px]" style={{ color: C.textMuted }}>ID appareil</p><p className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>{gpsSample.deviceId}</p></div>
+              <div><p className="text-[11px]" style={{ color: C.textMuted }}>Séquence événement</p><p className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>#{gpsSample.eventSequence}</p></div>
+              <div><p className="text-[11px]" style={{ color: C.textMuted }}>Signal GSM reçu</p><p className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>{gpsSample.gsmSignal} dBm</p></div>
+              <div><p className="text-[11px]" style={{ color: C.textMuted }}>Réseau</p><p className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>MCC {gpsSample.gsmMcc} · MNC {gpsSample.gsmMnc}</p></div>
+            </div>
+            <div className="mt-4 rounded-lg px-3 py-2.5" style={{ background: C.soft }}>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4" style={{ color: gpsSample.defenseActive ? C.green : C.gray }} />
+                <span className="text-xs font-semibold" style={{ color: C.text }}>Défense {gpsSample.defenseActive ? "activée" : "désactivée"}</span>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="rounded-2xl border p-4 flex-1 transition-all duration-200 hover:shadow-lift" style={{ background: C.soft, borderColor: C.borderSoft }}>
-            <span className="font-bold text-[16px] block mb-3" style={{ color: C.text }}>Évolution des incidents (7j)</span>
-            <ResponsiveContainer width="100%" height={155}>
-              <BarChart data={incidentBar} barSize={12} barGap={6}>
-                {/* Dégradé subtil par série (plus dense en haut de la barre) */}
-                <defs>
-                  <linearGradient id="barGradAlertes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" style={{ stopColor: C.primary }} stopOpacity={1} />
-                    <stop offset="100%" style={{ stopColor: C.primary }} stopOpacity={0.45} />
-                  </linearGradient>
-                  <linearGradient id="barGradIncidents" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" style={{ stopColor: C.red }} stopOpacity={1} />
-                    <stop offset="100%" style={{ stopColor: C.red }} stopOpacity={0.45} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="date" tick={{ fontSize: 9, fill: C.textMuted }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fill: C.textMuted }} axisLine={false} tickLine={false} width={18} />
-                <Tooltip contentStyle={{ background: C.navyMid, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 11, color: C.text }} cursor={{ fill: va(C.primary, "6%") }} />
-                <Legend wrapperStyle={{ fontSize: 10, color: C.textMuted, paddingTop: 8 }} />
-                <Bar dataKey="alertes" name="Alertes" fill="url(#barGradAlertes)" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="incidents" name="Incidents" fill="url(#barGradIncidents)" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <section className="rounded-xl border p-4" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h2 className="text-sm font-bold" style={{ color: C.text }}>Indicateurs de la trame</h2>
+              <span className="text-[10px]" style={{ color: C.textMuted }}>Valeurs reçues</span>
+            </div>
+            <div className="space-y-2">
+              {reportedFlags.map(({ label, active, icon: Icon }) => (
+                <div key={label} className="flex items-center gap-2.5 rounded-lg border px-3 py-2" style={{ borderColor: active ? va(C.orange, "30%") : C.border, background: active ? va(C.orange, "7%") : C.cardBg }}>
+                  <Icon className="h-4 w-4 flex-shrink-0" style={{ color: active ? C.orange : C.textMuted }} />
+                  <span className="min-w-0 flex-1 text-xs" style={{ color: C.text }}>{label}</span>
+                  <span className="text-[10px] font-bold" style={{ color: active ? C.orange : C.textMuted }}>{active ? "SIGNALÉ" : "NON"}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] leading-relaxed" style={{ color: C.textMuted }}>
+              Ces états sont reproduits tels que reçus. Leur acquittement et leur durée doivent être confirmés avec le protocole du traceur.
+            </p>
+          </section>
         </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border p-4" style={{ background: C.cardBg, borderColor: C.borderSoft }}>
+          <div className="mb-3 flex items-center gap-2"><Activity className="h-4 w-4" style={{ color: C.primary }} /><h2 className="text-sm font-bold" style={{ color: C.text }}>Horodatage de la télémétrie</h2></div>
+          <dl className="grid gap-3 sm:grid-cols-2">
+            <div><dt className="text-[11px]" style={{ color: C.textMuted }}>Position GPS (UTC)</dt><dd className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>{formatUtc(gpsSample.timestamp)}</dd></div>
+            <div><dt className="text-[11px]" style={{ color: C.textMuted }}>Réception serveur (UTC)</dt><dd className="mt-1 font-mono text-xs font-semibold" style={{ color: C.text }}>{formatUtc(gpsSample.serverTimestamp)}</dd></div>
+          </dl>
+        </div>
+        <div className="rounded-xl border p-4" style={{ background: va(C.orange, "5%"), borderColor: va(C.orange, "25%") }}>
+          <div className="mb-2 flex items-center gap-2"><AlertTriangle className="h-4 w-4" style={{ color: C.orange }} /><h2 className="text-sm font-bold" style={{ color: C.text }}>Interprétation des champs</h2></div>
+          <p className="text-xs leading-relaxed" style={{ color: C.textDim }}>
+            Le niveau batterie reçu vaut 0, sans indication permettant de savoir s’il est réellement nul ou indisponible. Il n’est donc pas converti en pourcentage ni utilisé comme alerte.
+          </p>
+          <p className="mt-2 text-xs leading-relaxed" style={{ color: C.textDim }}>
+            Une seule trame est chargée : aucun historique, cumul de flotte ou tendance ne peut être calculé à partir de cet exemple.
+          </p>
+        </div>
+      </section>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2" style={{ borderColor: C.border, background: C.cardBg }}>
+        <p className="text-[11px]" style={{ color: C.textMuted }}>Protocole {gpsSample.protocolId} · canal {gpsSample.channelId} · état véhicule {gpsSample.vehicleState}</p>
+        <button type="button" onClick={() => onNavigate("Tracking GPS")} className="text-xs font-semibold" style={{ color: C.primary }}>Ouvrir le module GPS</button>
       </div>
     </div>
   );
